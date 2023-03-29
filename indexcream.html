@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREAM</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <center>
+        <h1 class="btn-warning">Cream</h1>
+        <br><br>
+        <h3 id="status" class="btn btn-success"></h3>
+        <br>
+    </center>
+    
+</body>
+
+<script>
+
+objects = [];
+Status = "";
+
+
+    function setup()
+    {
+        canvas = createCanvas( 550, 500);
+        canvas.center();
+
+    cocossd = ml5.objectDetector("cocossd", modelready);   
+    document.getElementById("status").innerHTML = " status: detecting object "
+
+    }
+
+    function preload()
+    {
+        img = loadImage("cream.jpg");
+    }
+
+    function draw()
+    {
+        image(img, 0, 0, 550, 500);
+        stroke("blue");
+        noFill();
+        for(i = 0; i < objects.length; i++)
+        {
+            percent = Math.floor(objects[i].confidence * 100)
+            document.getElementById("status").innerHTML = "Status object detected";
+            rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+            text(objects[i].label + " "+ percent +" %", objects[i].x + 20, objects[i].y + 20);
+        }
+    }
+
+    function modelready()
+    {
+        Status = true;
+        console.log("model is loaded");
+        cocossd.detect(img, gotresults);
+    }
+
+    function gotresults(error, results)
+    {
+        if (error) 
+        {
+            console.log(error);
+        }
+
+        objects = results;
+        console.log(results)
+    }
+</script>
+</html>
